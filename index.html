@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amigo Secreto 🎁</title>
+<meta name="description" content="Abra seu link e descubra quem você tirou no amigo secreto.">
+<meta property="og:title" content="Amigo Secreto 🎁">
+<meta property="og:description" content="Toque no link para descobrir quem você tirou!">
+<meta name="theme-color" content="#4a0c18">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #6b1224;
+    --bg-2: #2b0610;
+    --gold: #f2c46d;
+    --gold-deep: #c98a2b;
+    --cream: #fff8ec;
+    --ink: #2b0a12;
+    --muted: #f5dfc9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    min-height: 100dvh;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--cream);
+    background: radial-gradient(120% 80% at 50% 0%, var(--bg-1) 0%, var(--bg-2) 70%) fixed, var(--bg-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #snow, #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  #confetti { z-index: 5; }
+
+  main {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+  }
+  .event {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: .08em;
+    max-width: 100%;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1.5px solid rgba(242,196,109,.45);
+    border-radius: 999px;
+    padding: 8px 18px;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(40px, 11vw, 60px);
+    line-height: 1.05;
+    margin: 0 0 14px;
+  }
+  .lead {
+    font-size: clamp(20px, 5.4vw, 24px);
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 0 auto 36px;
+    max-width: 24ch;
+  }
+
+  .big-btn {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    width: 100%;
+    max-width: 380px;
+    min-height: 120px;
+    border-radius: 28px;
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 8.5vw, 38px);
+    color: var(--ink);
+    background: linear-gradient(180deg, #ffe2a3 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    box-shadow: 0 10px 0 #8a5a17, 0 22px 40px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.7);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    transition: transform .12s ease, box-shadow .12s ease;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .big-btn .icon { font-size: 1.25em; line-height: 1; }
+  .big-btn:active { transform: translateY(8px); box-shadow: 0 2px 0 #8a5a17, 0 8px 20px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.7); animation: none; }
+  .big-btn:focus-visible { outline: 4px solid #fff; outline-offset: 6px; }
+  @keyframes pulse { 0%,100% { scale: 1; } 50% { scale: 1.035; } }
+
+  .hint {
+    margin-top: 34px;
+    font-size: 19px;
+    color: var(--muted);
+    opacity: .85;
+  }
+
+  /* Roleta */
+  .reel {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 28px;
+    padding: 34px 20px;
+    box-shadow: 0 24px 50px rgba(0,0,0,.45);
+    border: 6px solid var(--gold);
+  }
+  .reel-label { font-size: 20px; font-weight: 700; color: #7a4a52; margin-bottom: 10px; }
+  .reel-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(38px, 11vw, 56px);
+    line-height: 1.15;
+    min-height: 1.2em;
+    overflow-wrap: anywhere;
+  }
+  .reel-name.blur { filter: blur(1.5px); opacity: .8; }
+
+  /* Resultado */
+  .result-card {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 28px;
+    padding: 34px 22px 30px;
+    box-shadow: 0 24px 50px rgba(0,0,0,.45);
+    border: 6px solid var(--gold);
+    animation: pop .5s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .result-card .reel-label { font-size: 22px; }
+  .result-card .reel-name { color: #8f1630; font-size: clamp(44px, 13vw, 66px); margin: 6px 0 18px; }
+  .details {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .chip {
+    background: #f6e6cf;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight: 800;
+    font-size: 18px;
+    color: #5a2a32;
+  }
+  .secret { font-size: 20px; font-weight: 700; color: #5a2a32; margin: 0; }
+
+  .ghost-btn {
+    margin-top: 28px;
+    appearance: none;
+    background: transparent;
+    color: var(--cream);
+    border: 2px solid rgba(255,248,236,.5);
+    border-radius: 999px;
+    padding: 16px 28px;
+    font: 800 20px 'Nunito', system-ui, sans-serif;
+    cursor: pointer;
+    min-height: 60px;
+  }
+  .ghost-btn:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+
+  .error h1 { font-size: clamp(34px, 9vw, 46px); }
+
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .big-btn { animation: none; }
+    .result-card { animation: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main>
+  <!-- 1. Boas-vindas -->
+  <section id="intro" hidden>
+    <div class="event" id="eventName">Amigo Secreto</div>
+    <h1>Olá, <span id="giverName"></span>!</h1>
+    <p class="lead">Toque no botão abaixo para descobrir quem você tirou.</p>
+    <button class="big-btn" id="drawBtn" type="button">
+      <span class="icon" aria-hidden="true">🎁</span> Sortear
+    </button>
+    <p class="hint">🤫 Só você vai ver o nome.</p>
+  </section>
+
+  <!-- 2. Roleta -->
+  <section id="rolling" hidden aria-live="polite">
+    <div class="reel">
+      <div class="reel-label">Sorteando…</div>
+      <div class="reel-name blur" id="reelName">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- 3. Resultado -->
+  <section id="result" hidden>
+    <div class="result-card" role="status">
+      <div class="reel-label">Você tirou:</div>
+      <div class="reel-name" id="targetName"></div>
+      <div class="details" id="details"></div>
+      <p class="secret">🤫 Não conte para ninguém!</p>
+    </div>
+    <button class="ghost-btn" id="hideBtn" type="button">Esconder o nome</button>
+  </section>
+
+  <!-- Link quebrado -->
+  <section id="error" class="error" hidden>
+    <div class="event">Amigo Secreto</div>
+    <h1>Link incompleto 😕</h1>
+    <p class="lead">Peça para quem organizou o amigo secreto enviar o seu link de novo.</p>
+  </section>
+</main>
+
+<script src="shared.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const show = id => ['intro', 'rolling', 'result', 'error'].forEach(s => ($(s).hidden = s !== id));
+
+  const data = Codec.decode(location.hash.slice(1));
+  startSnow($('snow'));
+
+  if (!data || !data.n || !data.t) {
+    show('error');
+  } else {
+    if (data.e) { $('eventName').textContent = data.e; document.title = data.e + ' 🎁'; }
+    $('giverName').textContent = data.n;
+    $('targetName').textContent = data.t;
+
+    const details = [];
+    if (data.p) details.push('💰 ' + data.p);
+    if (data.d) details.push('📅 ' + data.d);
+    details.forEach(txt => {
+      const el = document.createElement('span');
+      el.className = 'chip';
+      el.textContent = txt;
+      $('details').append(el);
+    });
+
+    show('intro');
+    $('drawBtn').addEventListener('click', roll);
+    $('hideBtn').addEventListener('click', () => {
+      $('drawBtn').lastChild.textContent = ' Ver de novo';
+      show('intro');
+    });
+  }
+
+  function roll() {
+    show('rolling');
+    if (navigator.vibrate) navigator.vibrate(30);
+    const pool = data.o && data.o.length ? data.o : [data.t];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const steps = reduce ? 4 : 26;
+    let i = 0, delay = 60, last = '';
+
+    (function step() {
+      if (i >= steps) return reveal();
+      let name;
+      do { name = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && name === last);
+      last = name;
+      $('reelName').textContent = name;
+      i++;
+      delay = 60 + Math.pow(i / steps, 3) * 380;
+      setTimeout(step, delay);
+    })();
+  }
+
+  function reveal() {
+    show('result');
+    if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+    confetti();
+  }
+
+  function confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = $('confetti'), ctx = c.getContext('2d');
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+    const colors = ['#f2c46d', '#ffffff', '#e63950', '#3fae6a', '#ffd98a'];
+    const parts = Array.from({ length: 160 }, () => ({
+      x: c.width / 2 + (Math.random() - .5) * 80 * dpr,
+      y: c.height * .45,
+      vx: (Math.random() - .5) * 16 * dpr,
+      vy: (Math.random() * -14 - 6) * dpr,
+      w: (Math.random() * 8 + 6) * dpr,
+      h: (Math.random() * 6 + 4) * dpr,
+      a: Math.random() * Math.PI,
+      va: (Math.random() - .5) * .3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const start = performance.now();
+    (function frame(t) {
+      ctx.clearRect(0, 0, c.width, c.height);
+      for (const p of parts) {
+        p.vy += .35 * dpr; p.vx *= .99;
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.a);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (t - start < 4000) requestAnimationFrame(frame);
+      else ctx.clearRect(0, 0, c.width, c.height);
+    })(start);
+  }
+</script>
+</body>
+</html>

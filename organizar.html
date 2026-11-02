@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Organizar Amigo Secreto</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4a0c18">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #6b1224;
+    --bg-2: #2b0610;
+    --gold: #f2c46d;
+    --gold-deep: #c98a2b;
+    --cream: #fff8ec;
+    --paper: #fffdf8;
+    --ink: #2b0a12;
+    --soft: #7a4a52;
+    --line: #ecd9c0;
+    --red: #8f1630;
+    --green: #2f7d4f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: radial-gradient(120% 60% at 50% 0%, var(--bg-1) 0%, var(--bg-2) 70%) fixed, var(--bg-2);
+    padding: 32px 16px 64px;
+  }
+  #snow { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .wrap { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+  header { text-align: center; color: var(--cream); margin-bottom: 28px; }
+  header h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: clamp(32px, 8vw, 44px); margin: 0 0 6px; }
+  header p { margin: 0; color: #f5dfc9; font-size: 17px; }
+
+  .card {
+    background: var(--paper);
+    border-radius: 22px;
+    padding: 24px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 16px 36px rgba(0,0,0,.35);
+  }
+  .card h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 22px;
+    margin: 0 0 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .step {
+    display: inline-grid; place-items: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    font: 800 15px 'Nunito', sans-serif;
+  }
+  .card .sub { margin: 0 0 16px; color: var(--soft); font-size: 15px; }
+
+  label { display: block; font-weight: 800; font-size: 14px; margin: 12px 0 6px; color: var(--soft); }
+  input[type=text], textarea, select {
+    width: 100%;
+    font: 600 17px 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold-deep); }
+  textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .count { margin-top: 8px; font-size: 14px; color: var(--soft); font-weight: 700; }
+
+  .rule-form { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+  .rule-form .mid { font-weight: 800; color: var(--soft); font-size: 14px; text-align: center; }
+  .rule-opts { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; margin: 0; color: var(--ink); cursor: pointer; }
+  .check input { width: 20px; height: 20px; accent-color: var(--red); }
+
+  .rules { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
+  .rules li {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: #fbf3e6; border-radius: 12px; padding: 10px 12px 10px 14px;
+    font-weight: 700;
+  }
+  .rules li .x { color: var(--red); }
+  .empty { color: var(--soft); font-size: 15px; margin: 14px 0 0; }
+
+  button { font-family: 'Nunito', system-ui, sans-serif; cursor: pointer; }
+  .btn {
+    appearance: none; border: 0; border-radius: 12px;
+    padding: 12px 18px; font-weight: 800; font-size: 15px;
+    background: var(--ink); color: #fff;
+    text-decoration: none;
+  }
+  .btn.light { background: #f1e3cf; color: var(--ink); }
+  .btn.wa { background: #1f9d55; color: #fff; }
+  .btn.done { background: #dff0e5; color: var(--green); }
+  .icon-btn { appearance: none; border: 0; background: transparent; font-size: 20px; color: var(--soft); padding: 4px 8px; border-radius: 8px; }
+  .icon-btn:hover { background: #f1e3cf; }
+
+  .cta {
+    display: block; width: 100%;
+    appearance: none; border: 0; border-radius: 18px;
+    min-height: 70px; font-weight: 800; font-size: 22px;
+    color: var(--ink);
+    background: linear-gradient(180deg, #ffe2a3 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    box-shadow: 0 6px 0 #8a5a17, 0 16px 30px rgba(0,0,0,.35);
+    margin: 8px 0 18px;
+  }
+  .cta:active { transform: translateY(4px); box-shadow: 0 2px 0 #8a5a17; }
+
+  .alert { border-radius: 12px; padding: 12px 14px; font-weight: 700; font-size: 15px; margin: 0 0 18px; }
+  .alert.err { background: #fde3e6; color: var(--red); }
+  .alert.warn { background: #fff1d6; color: #7a4a10; }
+
+  .links { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .links li {
+    border: 2px solid var(--line); border-radius: 14px; padding: 12px 14px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .links li.sent { border-color: #bfe0cb; background: #f4fbf6; }
+  .links .who { font-weight: 800; font-size: 18px; }
+  .links .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .progress { font-weight: 800; color: var(--soft); margin: 0 0 12px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 30px);
+    background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 999px;
+    font-weight: 800; opacity: 0; transition: .25s; z-index: 10; pointer-events: none;
+  }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .foot { text-align: center; color: #f5dfc9; font-size: 14px; opacity: .8; margin-top: 10px; }
+  .foot button { background: none; border: 0; color: inherit; text-decoration: underline; font-size: 14px; }
+
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+    .rule-form { grid-template-columns: 1fr; }
+    .rule-form .mid { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header>
+    <h1>🎄 Amigo Secreto</h1>
+    <p>Monte o sorteio e envie um link para cada pessoa.</p>
+  </header>
+
+  <section class="card">
+    <h2><span class="step">1</span> Sobre o evento</h2>
+    <p class="sub">Aparece na tela de cada participante. Tudo opcional.</p>
+    <label for="evName">Nome do evento</label>
+    <input type="text" id="evName" placeholder="Ex.: Amigo Secreto da Família 2026">
+    <div class="row">
+      <div>
+        <label for="evPrice">Valor do presente</label>
+        <input type="text" id="evPrice" placeholder="Ex.: Até R$ 100">
+      </div>
+      <div>
+        <label for="evDate">Data da troca</label>
+        <input type="text" id="evDate" placeholder="Ex.: 24 de dezembro">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">2</span> Participantes</h2>
+    <p class="sub">Um nome por linha. Use nomes diferentes para cada pessoa.</p>
+    <textarea id="names" placeholder="Vó Maria&#10;Tio João&#10;Ana&#10;Pedro"></textarea>
+    <div class="count" id="count">0 participantes</div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span> Exceções</h2>
+    <p class="sub">Quem não pode tirar quem (ex.: casais). Ninguém tira a si mesmo — isso já é automático.</p>
+    <div class="rule-form">
+      <select id="ruleA" aria-label="Pessoa"></select>
+      <div class="mid">não pode tirar</div>
+      <select id="ruleB" aria-label="Pessoa que não pode ser tirada"></select>
+    </div>
+    <div class="rule-opts">
+      <label class="check"><input type="checkbox" id="ruleBoth" checked> E vice-versa</label>
+      <button class="btn" id="addRule" type="button">Adicionar exceção</button>
+    </div>
+    <ul class="rules" id="rules"></ul>
+  </section>
+
+  <section class="card" id="drawCard">
+    <h2><span class="step">4</span> Sortear</h2>
+    <p class="sub">O resultado fica escondido dentro de cada link — nem você vai saber quem tirou quem.</p>
+    <div id="drawMsg"></div>
+    <button class="cta" id="drawBtn" type="button">🎁 Sortear e gerar links</button>
+
+    <div id="results" hidden>
+      <div class="alert warn">Se sortear de novo, os links antigos continuam mostrando o sorteio antigo. Envie só os links da lista abaixo.</div>
+      <p class="progress" id="progress"></p>
+      <ul class="links" id="links"></ul>
+    </div>
+  </section>
+
+  <p class="foot">Os dados ficam salvos só neste navegador. <button type="button" id="resetAll">Apagar tudo e recomeçar</button></p>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="shared.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const STORE = 'amigo-secreto-organizador';
+  const SEP = '\u0000';
+
+  let state = load() || { name: '', price: '', date: '', names: '', rules: [], links: [], sent: [] };
+
+  function load() { try { return JSON.parse(localStorage.getItem(STORE)); } catch { return null; } }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch {} }
+
+  function parseNames() {
+    const seen = new Set(), out = [];
+    for (const raw of $('names').value.split('\n')) {
+      const n = raw.trim().replace(/\s+/g, ' ');
+      if (!n) continue;
+      const key = n.toLocaleLowerCase('pt-BR');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(n);
+    }
+    return out;
+  }
+
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => t.classList.remove('on'), 1800);
+  }
+
+  // ---------- Formulário ----------
+  $('evName').value = state.name;
+  $('evPrice').value = state.price;
+  $('evDate').value = state.date;
+  $('names').value = state.names;
+
+  ['evName', 'evPrice', 'evDate'].forEach((id, i) =>
+    $(id).addEventListener('input', e => { state[['name', 'price', 'date'][i]] = e.target.value; save(); }));
+
+  $('names').addEventListener('input', () => { state.names = $('names').value; save(); refreshNames(); });
+
+  function refreshNames() {
+    const names = parseNames();
+    $('count').textContent = names.length === 1 ? '1 participante' : names.length + ' participantes';
+    for (const id of ['ruleA', 'ruleB']) {
+      const sel = $(id), prev = sel.value;
+      sel.innerHTML = '';
+      const ph = new Option(names.length ? 'Escolha…' : 'Adicione participantes', '');
+      ph.disabled = true;
+      sel.append(ph);
+      names.forEach(n => sel.append(new Option(n, n)));
+      sel.value = names.includes(prev) ? prev : '';
+    }
+    renderRules();
+  }
+
+  // ---------- Exceções ----------
+  $('addRule').addEventListener('click', () => {
+    const a = $('ruleA').value, b = $('ruleB').value;
+    if (!a || !b) return toast('Escolha as duas pessoas');
+    if (a === b) return toast('Escolha pessoas diferentes');
+    const add = (x, y) => { if (!state.rules.some(r => r[0] === x && r[1] === y)) state.rules.push([x, y]); };
+    add(a, b);
+    if ($('ruleBoth').checked) add(b, a);
+    save();
+    renderRules();
+    $('ruleA').value = ''; $('ruleB').value = '';
+  });
+
+  function renderRules() {
+    const names = new Set(parseNames());
+    const ul = $('rules');
+    ul.innerHTML = '';
+    // Junta regras de mão dupla numa linha só
+    const shown = new Set();
+    state.rules.forEach(([a, b]) => {
+      const k = a + SEP + b;
+      if (shown.has(k)) return;
+      const both = state.rules.some(r => r[0] === b && r[1] === a);
+      shown.add(k); if (both) shown.add(b + SEP + a);
+      const li = document.createElement('li');
+      const stale = !names.has(a) || !names.has(b);
+      const txt = document.createElement('span');
+      txt.append(a, ' ', Object.assign(document.createElement('span'), { className: 'x', textContent: both ? '⇄' : '✕→' }), ' ', b);
+      if (stale) {
+        txt.style.opacity = .45;
+        txt.title = 'Alguém desta regra não está mais na lista';
+      }
+      const rm = Object.assign(document.createElement('button'), { className: 'icon-btn', type: 'button', textContent: '🗑', title: 'Remover' });
+      rm.addEventListener('click', () => {
+        state.rules = state.rules.filter(r => !((r[0] === a && r[1] === b) || (both && r[0] === b && r[1] === a)));
+        save(); renderRules();
+      });
+      li.append(txt, rm);
+      ul.append(li);
+    });
+    if (!state.rules.length) {
+      ul.innerHTML = '<li style="background:none;padding:0;font-weight:500;color:var(--soft)">Nenhuma exceção ainda.</li>';
+    }
+  }
+
+  // ---------- Sorteio ----------
+  function drawPairs(names, forbid) {
+    const ok = (g, r) => g !== r && !forbid.has(g + SEP + r);
+    // 1) Tentativas aleatórias puras (sorteio mais justo)
+    for (let t = 0; t < 20000; t++) {
+      const perm = shuffle(names);
+      if (names.every((g, i) => ok(g, perm[i]))) return Object.fromEntries(names.map((g, i) => [g, perm[i]]));
+    }
+    // 2) Busca completa para casos muito restritos (ou para provar que é impossível)
+    const givers = shuffle(names).sort((a, b) =>
+      names.filter(r => ok(a, r)).length - names.filter(r => ok(b, r)).length);
+    const used = new Set(), res = {};
+    return (function bt(i) {
+      if (i === givers.length) return true;
+      const g = givers[i];
+      for (const r of shuffle(names)) {
+        if (used.has(r) || !ok(g, r)) continue;
+        used.add(r); res[g] = r;
+        if (bt(i + 1)) return true;
+        used.delete(r);
+      }
+      return false;
+    })(0) ? res : null;
+  }
+
+  $('drawBtn').addEventListener('click', () => {
+    const names = parseNames();
+    const msg = $('drawMsg');
+    msg.innerHTML = '';
+    const err = text => { msg.innerHTML = ''; msg.append(Object.assign(document.createElement('div'), { className: 'alert err', textContent: text })); };
+
+    if (names.length < 3) return err('Coloque pelo menos 3 participantes.');
+    if (state.links.length && !confirm('Já existe um sorteio. Fazer um novo sorteio? Os links antigos deixam de valer para você (mas continuam mostrando o resultado antigo).')) return;
+
+    const valid = new Set(names);
+    const forbid = new Set(state.rules.filter(([a, b]) => valid.has(a) && valid.has(b)).map(([a, b]) => a + SEP + b));
+    const pairs = drawPairs(names, forbid);
+    if (!pairs) return err('Não dá para sortear com essas exceções. Remova alguma exceção ou adicione mais participantes.');
+
+    const base = new URL('./', location.href).href;
+    state.links = names.map(n => ({
+      n,
+      url: base + '#' + Codec.encode({
+        v: 1,
+        e: state.name.trim(),
+        p: state.price.trim(),
+        d: state.date.trim(),
+        n,
+        t: pairs[n],
+        o: shuffle(names.filter(x => x !== n)),
+      }),
+    }));
+    state.sent = [];
+    save();
+    renderLinks();
+    $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Sorteio feito! 🎉');
+  });
+
+  function messageFor(link) {
+    const ev = state.name.trim() || 'amigo secreto';
+    return `Oi, ${link.n}! 🎁\nEste é o seu link do ${ev}. É só abrir e tocar no botão para descobrir quem você tirou:\n${link.url}`;
+  }
+
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+  }
+
+  function markSent(n) {
+    if (!state.sent.includes(n)) state.sent.push(n);
+    save(); renderLinks();
+  }
+
+  function renderLinks() {
+    const has = state.links.length > 0;
+    $('results').hidden = !has;
+    $('drawBtn').textContent = has ? '🔄 Sortear de novo' : '🎁 Sortear e gerar links';
+    if (!has) return;
+
+    const ul = $('links');
+    ul.innerHTML = '';
+    state.links.forEach(link => {
+      const sent = state.sent.includes(link.n);
+      const li = document.createElement('li');
+      if (sent) li.className = 'sent';
+      const who = Object.assign(document.createElement('span'), { className: 'who', textContent: (sent ? '✅ ' : '') + link.n });
+      const actions = Object.assign(document.createElement('div'), { className: 'actions' });
+
+      const bCopy = Object.assign(document.createElement('button'), { className: 'btn light', type: 'button', textContent: 'Copiar mensagem' });
+      bCopy.addEventListener('click', async () => { await copy(messageFor(link)); toast('Mensagem de ' + link.n + ' copiada'); markSent(link.n); });
+
+      const bLink = Object.assign(document.createElement('button'), { className: 'btn light', type: 'button', textContent: 'Só o link' });
+      bLink.addEventListener('click', async () => { await copy(link.url); toast('Link de ' + link.n + ' copiado'); markSent(link.n); });
+
+      const bWa = Object.assign(document.createElement('a'), {
+        className: 'btn wa', textContent: 'WhatsApp', target: '_blank', rel: 'noopener',
+        href: 'https://wa.me/?text=' + encodeURIComponent(messageFor(link)),
+      });
+      bWa.addEventListener('click', () => markSent(link.n));
+
+      actions.append(bCopy, bLink, bWa);
+      if (sent) {
+        const undo = Object.assign(document.createElement('button'), { className: 'icon-btn', type: 'button', textContent: '↩', title: 'Marcar como não enviado' });
+        undo.addEventListener('click', () => { state.sent = state.sent.filter(x => x !== link.n); save(); renderLinks(); });
+        actions.append(undo);
+      }
+      li.append(who, actions);
+      ul.append(li);
+    });
+    $('progress').textContent = `${state.sent.length} de ${state.links.length} enviados`;
+  }
+
+  $('resetAll').addEventListener('click', () => {
+    if (!confirm('Apagar participantes, exceções e links deste navegador?')) return;
+    state = { name: '', price: '', date: '', names: '', rules: [], links: [], sent: [] };
+    save();
+    ['evName', 'evPrice', 'evDate', 'names'].forEach(id => ($(id).value = ''));
+    $('drawMsg').innerHTML = '';
+    refreshNames(); renderLinks();
+  });
+
+  refreshNames();
+  renderLinks();
+  startSnow($('snow'));
+</script>
+</body>
+</html>
