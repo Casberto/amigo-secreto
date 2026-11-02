@@ -127,7 +127,10 @@
   .links li.sent { border-color: #bfe0cb; background: #f4fbf6; }
   .links .who { font-weight: 800; font-size: 18px; }
   .links .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-  .progress { font-weight: 800; color: var(--soft); margin: 0 0 12px; }
+  .progress { font-weight: 800; color: var(--soft); margin: 0; }
+  .debug-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .debug-row .check { font-size: 14px; color: var(--soft); }
+  .links .target { display: block; font-size: 15px; font-weight: 700; color: var(--red); margin-top: 2px; }
 
   .toast {
     position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 30px);
@@ -202,7 +205,10 @@
 
     <div id="results" hidden>
       <div class="alert warn">Se sortear de novo, os links antigos continuam mostrando o sorteio antigo. Envie só os links da lista abaixo.</div>
-      <p class="progress" id="progress"></p>
+      <div class="debug-row">
+        <p class="progress" id="progress"></p>
+        <label class="check"><input type="checkbox" id="debug"> Modo de teste: mostrar quem tirou quem</label>
+      </div>
       <ul class="links" id="links"></ul>
     </div>
   </section>
@@ -405,6 +411,10 @@
       const li = document.createElement('li');
       if (sent) li.className = 'sent';
       const who = Object.assign(document.createElement('span'), { className: 'who', textContent: (sent ? '✅ ' : '') + link.n });
+      if ($('debug').checked) {
+        const data = Codec.decode(link.url.split('#')[1]);
+        who.append(Object.assign(document.createElement('span'), { className: 'target', textContent: '🎁 tirou ' + (data ? data.t : '?') }));
+      }
       const actions = Object.assign(document.createElement('div'), { className: 'actions' });
 
       const bCopy = Object.assign(document.createElement('button'), { className: 'btn light', type: 'button', textContent: 'Copiar mensagem' });
@@ -430,6 +440,10 @@
     });
     $('progress').textContent = `${state.sent.length} de ${state.links.length} enviados`;
   }
+
+  // Sempre começa desmarcado: o resultado só aparece quando você pedir.
+  $('debug').checked = false;
+  $('debug').addEventListener('change', renderLinks);
 
   $('resetAll').addEventListener('click', () => {
     if (!confirm('Apagar participantes, exceções e links deste navegador?')) return;
